@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Completo - Materiais de Limpeza SMS</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -417,112 +415,21 @@
             color: #721c24;
         }
         
-        /* Novos estilos para exportação e sugestões */
-        .export-section {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-top: 2rem;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .export-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .export-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .export-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .export-btn.secondary {
-            background: var(--secondary);
-        }
-        
-        .export-btn.secondary:hover {
-            background: #218838;
-        }
-        
-        .suggestions-table {
+        .gauge-container {
+            position: relative;
             width: 100%;
-            margin-top: 1rem;
+            height: 200px;
+            margin: 0 auto;
         }
         
-        .suggestions-table th {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .response-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-bottom: 1rem;
-        }
-        
-        .contract-alert {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .contract-alert i {
-            color: #f39c12;
-            font-size: 1.5rem;
-        }
-        
-        .responder-form {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-top: 2rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
+        .gauge-chart {
             width: 100%;
-            padding: 0.7rem;
-            border: 1px solid var(--light-gray);
-            border-radius: 6px;
-            font-size: 0.9rem;
+            height: 100%;
         }
         
-        .form-group textarea {
-            height: 100px;
-            resize: vertical;
+        .ranking-table th:nth-child(3),
+        .ranking-table td:nth-child(3) {
+            text-align: center;
         }
         
         @media (max-width: 1200px) {
@@ -559,10 +466,6 @@
                 min-width: 120px;
                 text-align: center;
             }
-            
-            .export-buttons {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
@@ -590,22 +493,12 @@
             <div class="tabs">
                 <div class="tab active" data-tab="overview">Visão Geral</div>
                 <div class="tab" data-tab="efficiency">Eficiência de Estoque</div>
-                <div class="tab" data-tab="suggestions">Sugestões e Respostas</div>
                 <div class="tab" data-tab="units">Unidades</div>
                 <div class="tab" data-tab="products">Produtos</div>
                 <div class="tab" data-tab="analysis">Análise IA</div>
-                <div class="tab" data-tab="reports">Relatórios</div>
             </div>
             
             <div class="tab-content active" id="overview">
-                <div class="contract-alert">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div>
-                        <strong>Monitoramento de Entrega de Materiais</strong>
-                        <p>Este painel monitora a adequação entre materiais disponibilizados e necessidades das unidades de saúde</p>
-                    </div>
-                </div>
-                
                 <div class="controls">
                     <select id="filterType">
                         <option value="all">Todos os Tipos</option>
@@ -677,18 +570,10 @@
                 </div>
             </div>
             
-            <!-- ABA: Eficiência de Estoque -->
+            <!-- NOVA ABA: Eficiência de Estoque -->
             <div class="tab-content" id="efficiency">
                 <h2><i class="fas fa-chart-line"></i> Eficiência de Estoque por Unidade</h2>
                 <p class="data-label" style="margin-bottom: 1.5rem;">Análise da adequação entre materiais disponibilizados e necessidades mínimas sugeridas</p>
-                
-                <div class="contract-alert">
-                    <i class="fas fa-clipboard-check"></i>
-                    <div>
-                        <strong>Indicador de Desempenho</strong>
-                        <p>A eficiência mede a proporção entre materiais recebidos e necessidades reais das unidades</p>
-                    </div>
-                </div>
                 
                 <div class="efficiency-stats">
                     <div class="efficiency-stat-card efficient">
@@ -744,84 +629,6 @@
                             <!-- Dados preenchidos via JavaScript -->
                         </tbody>
                     </table>
-                </div>
-            </div>
-            
-            <!-- NOVA ABA: Sugestões e Respostas -->
-            <div class="tab-content" id="suggestions">
-                <h2><i class="fas fa-comments"></i> Sugestões e Respostas das Unidades</h2>
-                <p class="data-label" style="margin-bottom: 1.5rem;">Registro completo de sugestões e feedback das unidades de saúde</p>
-                
-                <div class="response-info">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Total de <strong id="totalSuggestions">0</strong> sugestões recebidas de <strong id="unitsWithSuggestions">0</strong> unidades</span>
-                </div>
-                
-                <div class="controls">
-                    <select id="filterSuggestionUnit">
-                        <option value="all">Todas as Unidades</option>
-                        <!-- Opções preenchidas via JavaScript -->
-                    </select>
-                    <select id="filterSuggestionStatus">
-                        <option value="all">Todos os Status</option>
-                        <option value="pending">Pendentes</option>
-                        <option value="approved">Aprovadas</option>
-                        <option value="rejected">Rejeitadas</option>
-                    </select>
-                </div>
-                
-                <div class="table-container">
-                    <h3>Registro de Sugestões</h3>
-                    <table class="suggestions-table">
-                        <thead>
-                            <tr>
-                                <th>Unidade</th>
-                                <th>Produto Sugerido</th>
-                                <th>Quantidade</th>
-                                <th>Data</th>
-                                <th>Status</th>
-                                <th>Resposta</th>
-                                <th>Responsável</th>
-                            </tr>
-                        </thead>
-                        <tbody id="suggestionsTableBody">
-                            <!-- Dados preenchidos via JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Formulário para responder sugestões -->
-                <div class="responder-form">
-                    <h3><i class="fas fa-reply"></i> Responder Sugestão</h3>
-                    <div class="form-group">
-                        <label for="selectSuggestion">Selecionar Sugestão:</label>
-                        <select id="selectSuggestion">
-                            <option value="">Selecione uma sugestão para responder</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="responseStatus">Status da Resposta:</label>
-                        <select id="responseStatus">
-                            <option value="approved">Aprovada</option>
-                            <option value="rejected">Rejeitada</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="responseText">Resposta:</label>
-                        <textarea id="responseText" placeholder="Digite a resposta para a unidade..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="responseResponsible">Responsável:</label>
-                        <input type="text" id="responseResponsible" placeholder="Seu nome">
-                    </div>
-                    <button id="submitResponse" class="export-btn secondary">
-                        <i class="fas fa-paper-plane"></i> Enviar Resposta
-                    </button>
-                </div>
-                
-                <div class="chart-container" style="height: 300px; margin-top: 2rem;">
-                    <h3>Sugestões por Tipo de Unidade</h3>
-                    <canvas id="suggestionsByTypeChart"></canvas>
                 </div>
             </div>
             
@@ -883,28 +690,28 @@
                     <h3><i class="fas fa-robot"></i> Insights Inteligentes</h3>
                     
                     <div class="insight-item">
-                        <h4>📊 Padrões de Entrega Identificados</h4>
-                        <p>Unidades do tipo CAIS apresentam 25% mais eficiência na distribuição de ÁLCOOL 70% comparado às UBS. Sugere-se revisão do modelo de distribuição.</p>
+                        <h4>📊 Padrões de Consumo Identificados</h4>
+                        <p>As unidades do tipo CAIS apresentam 25% mais consumo de ÁLCOOL 70% em comparação com UBS. Recomenda-se ajuste na distribuição.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <h4>🚨 Unidades com Maior Gap de Entrega</h4>
-                        <p>5 unidades apresentam eficiência abaixo de 50%: UBS Petrópolis (42%), UBS Independente (38%), Ambulatório Bela Vista (45%), Cais Hípica (48%) e UBS Jardim América (41%).</p>
+                        <h4>🚨 Alertas Prioritários</h4>
+                        <p>5 unidades estão com estoque crítico de múltiplos produtos simultaneamente: UBS Petrópolis, UBS Independente, Ambulatório Bela Vista, Cais Hípica e UBS Jardim América.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <h4>💡 Sugestões Mais Frequentes</h4>
-                        <p>"Escova para limpeza dos panos" aparece em 12 unidades, indicando necessidade não atendida pelo fornecedor atual.</p>
+                        <h4>💡 Sugestões Consolidadas</h4>
+                        <p>As sugestões mais frequentes são: "Escova para limpeza dos panos" (12 unidades), "Luvas de borracha" (8 unidades) e "Baldes adicionais" (6 unidades).</p>
                     </div>
                     
                     <div class="insight-item">
-                        <h4>📈 Tendências de Consumo</h4>
-                        <p>Previsão de aumento de 15% no consumo de DESINFETANTE para o próximo trimestre. Recomenda-se ajuste nos pedidos.</p>
+                        <h4>📈 Tendências e Previsões</h4>
+                        <p>Com base no histórico, há tendência de aumento de 15% no consumo de DESINFETANTE para o próximo trimestre. Recomenda-se planejamento antecipado.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <h4>💰 Impacto Financeiro</h4>
-                        <p>Otimização na distribuição pode gerar economia de 18% através da padronização de pedidos entre unidades similares.</p>
+                        <h4>💰 Otimização de Recursos</h4>
+                        <p>Identificado potencial de economia de 18% através da padronização de pedidos entre unidades do mesmo tipo.</p>
                     </div>
                 </div>
                 
@@ -919,89 +726,16 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- NOVA ABA: Relatórios -->
-            <div class="tab-content" id="reports">
-                <h2><i class="fas fa-file-pdf"></i> Relatórios e Documentação</h2>
-                <p class="data-label" style="margin-bottom: 1.5rem;">Geração de relatórios completos para documentação e auditoria</p>
-                
-                <div class="contract-alert">
-                    <i class="fas fa-file-contract"></i>
-                    <div>
-                        <strong>Documentação para Gestão Contratual</strong>
-                        <p>Relatórios completos para acompanhamento de desempenho e comprovação de necessidades</p>
-                    </div>
-                </div>
-                
-                <div class="export-section">
-                    <h3><i class="fas fa-download"></i> Exportar Relatórios</h3>
-                    <p>Gere relatórios completos em PDF para documentação oficial</p>
-                    
-                    <div class="export-buttons">
-                        <button class="export-btn" id="exportFullReport">
-                            <i class="fas fa-file-pdf"></i> Relatório Completo
-                        </button>
-                        <button class="export-btn" id="exportEfficiencyReport">
-                            <i class="fas fa-chart-bar"></i> Relatório de Eficiência
-                        </button>
-                        <button class="export-btn" id="exportSuggestionsReport">
-                            <i class="fas fa-comments"></i> Relatório de Sugestões
-                        </button>
-                        <button class="export-btn secondary" id="exportUnitReport">
-                            <i class="fas fa-clinic-medical"></i> Relatório por Unidade
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="charts-grid" style="margin-top: 2rem;">
-                    <div class="chart-container">
-                        <h3>Resumo Executivo - Eficiência</h3>
-                        <div id="executiveSummary" style="padding: 1rem;">
-                            <div class="efficiency-stats" style="grid-template-columns: 1fr; margin-bottom: 1rem;">
-                                <div class="efficiency-stat-card efficient">
-                                    <h3 id="executiveEfficient">0</h3>
-                                    <p>Unidades com Entrega Adequada</p>
-                                </div>
-                            </div>
-                            <p><strong>Análise:</strong> <span id="efficiencyAnalysis">Carregando análise...</span></p>
-                            <p><strong>Recomendações:</strong> <span id="efficiencyRecommendations">Carregando recomendações...</span></p>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <h3>Indicadores Chave</h3>
-                        <canvas id="kpiChart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="table-container">
-                    <h3>Dados para Auditoria</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Indicador</th>
-                                <th>Valor</th>
-                                <th>Meta</th>
-                                <th>Status</th>
-                                <th>Variação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="auditTableBody">
-                            <!-- Dados preenchidos via JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
         
         <footer>
             <p>Secretaria Municipal de Saúde &copy; 2025 - Sistema de Controle de Materiais de Limpeza</p>
-            <p>Painel de Monitoramento Completo - Dados em Tempo Real | Documentação para Gestão Contratual</p>
+            <p>Painel de Monitoramento Completo - Dados em Tempo Real | <a href="#" style="color: var(--primary);">GitHub Repository</a></p>
         </footer>
     </div>
 
     <script>
-        // Dados completos de exemplo
+        // Dados completos de exemplo baseados na sua estrutura
         const productsList = [
             "ÁGUA SANITÁRIA 5L", "ÁLCOOL IL 70%", "AROMATIZADOR AR AGRADÁVEL 400ML", 
             "DESINFETANTE 5L", "DETERGENTE 500ML", "DETERGENTE 5L COLORADO",
@@ -1046,46 +780,13 @@
             }
         }
 
-        // Dados de sugestões com respostas
-        const suggestionsData = [];
-
         // Gerar dados realistas para cada unidade
         unitNames.forEach((name, index) => {
             const unitType = getUnitType(name);
             const products = [];
             
-            // Gerar algumas sugestões para a unidade
-            const unitSuggestions = [];
-            const suggestionCount = Math.floor(Math.random() * 3);
-            
-            for (let i = 0; i < suggestionCount; i++) {
-                const suggestionProducts = [
-                    "Escova (para limpeza dos panos)",
-                    "Luvas de borracha",
-                    "Balde adicional", 
-                    "Pano de chão extra",
-                    "Vassoura reserva",
-                    "Rodo extra",
-                    "Luvas descartáveis",
-                    "Máscaras de proteção"
-                ];
-                
-                const suggestion = {
-                    id: suggestionsData.length + 1,
-                    unitName: name,
-                    product: suggestionProducts[Math.floor(Math.random() * suggestionProducts.length)],
-                    quantity: Math.floor(Math.random() * 5) + 1,
-                    date: `15/10/2025`,
-                    status: 'pending',
-                    response: "",
-                    responsible: ""
-                };
-                
-                suggestionsData.push(suggestion);
-                unitSuggestions.push(suggestion);
-            }
-            
             productsList.forEach(productName => {
+                // Gerar dados realistas para cada produto
                 const minSuggested = Math.floor(Math.random() * 5) + 1;
                 const currentStock = Math.floor(Math.random() * (minSuggested + 3));
                 let status = "ok";
@@ -1096,6 +797,7 @@
                     status = "warning";
                 }
                 
+                // Algumas unidades terão sugestões
                 const hasSuggestion = Math.random() > 0.7;
                 const suggestion = hasSuggestion ? 
                     ["Escova (para limpeza dos panos)", "Luvas de borracha", "Balde adicional", "Pano de chão extra"][Math.floor(Math.random() * 4)] : "";
@@ -1117,8 +819,7 @@
                 name: name,
                 type: unitType,
                 products: products,
-                lastUpdate: `15/10/2025 - ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-                suggestions: unitSuggestions
+                lastUpdate: `15/10/2025 - ${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`
             });
         });
 
@@ -1137,22 +838,6 @@
         const efficientUnits = document.getElementById('efficientUnits');
         const attentionUnits = document.getElementById('attentionUnits');
         const criticalUnits = document.getElementById('criticalUnits');
-        const suggestionsTableBody = document.getElementById('suggestionsTableBody');
-        const totalSuggestions = document.getElementById('totalSuggestions');
-        const unitsWithSuggestions = document.getElementById('unitsWithSuggestions');
-        const filterSuggestionUnit = document.getElementById('filterSuggestionUnit');
-        const filterSuggestionStatus = document.getElementById('filterSuggestionStatus');
-        const selectSuggestion = document.getElementById('selectSuggestion');
-        const responseStatus = document.getElementById('responseStatus');
-        const responseText = document.getElementById('responseText');
-        const responseResponsible = document.getElementById('responseResponsible');
-        const submitResponse = document.getElementById('submitResponse');
-        
-        // Botões de exportação
-        const exportFullReport = document.getElementById('exportFullReport');
-        const exportEfficiencyReport = document.getElementById('exportEfficiencyReport');
-        const exportSuggestionsReport = document.getElementById('exportSuggestionsReport');
-        const exportUnitReport = document.getElementById('exportUnitReport');
         
         // Variáveis para gráficos
         let charts = {};
@@ -1167,250 +852,51 @@
             renderProductsTable();
             populateProductFilter();
             calculateEfficiency();
-            renderSuggestionsTab();
-            setupExportButtons();
-            setupResponseForm();
         });
 
-        // Configurar formulário de resposta
-        function setupResponseForm() {
-            // Preencher select de sugestões
-            selectSuggestion.innerHTML = '<option value="">Selecione uma sugestão para responder</option>';
-            suggestionsData.filter(s => s.status === 'pending').forEach(suggestion => {
-                const option = document.createElement('option');
-                option.value = suggestion.id;
-                option.textContent = `${suggestion.unitName} - ${suggestion.product} (Qtd: ${suggestion.quantity})`;
-                selectSuggestion.appendChild(option);
-            });
-
-            // Configurar envio de resposta
-            submitResponse.addEventListener('click', function() {
-                const suggestionId = parseInt(selectSuggestion.value);
-                const status = responseStatus.value;
-                const text = responseText.value.trim();
-                const responsible = responseResponsible.value.trim();
-
-                if (!suggestionId) {
-                    alert('Selecione uma sugestão para responder');
-                    return;
-                }
-
-                if (!text) {
-                    alert('Digite uma resposta');
-                    return;
-                }
-
-                if (!responsible) {
-                    alert('Informe o responsável pela resposta');
-                    return;
-                }
-
-                // Encontrar e atualizar sugestão
-                const suggestion = suggestionsData.find(s => s.id === suggestionId);
-                if (suggestion) {
-                    suggestion.status = status;
-                    suggestion.response = text;
-                    suggestion.responsible = responsible;
-
-                    // Atualizar interface
-                    renderSuggestionsTable();
-                    updateResponseForm();
-
-                    alert('Resposta enviada com sucesso!');
-                }
-            });
+        // Inicializar dashboard
+        function initializeDashboard() {
+            updateCounters();
         }
 
-        // Atualizar formulário de resposta
-        function updateResponseForm() {
-            responseText.value = '';
-            responseResponsible.value = '';
-            selectSuggestion.innerHTML = '<option value="">Selecione uma sugestão para responder</option>';
-            suggestionsData.filter(s => s.status === 'pending').forEach(suggestion => {
-                const option = document.createElement('option');
-                option.value = suggestion.id;
-                option.textContent = `${suggestion.unitName} - ${suggestion.product} (Qtd: ${suggestion.quantity})`;
-                selectSuggestion.appendChild(option);
-            });
-        }
-
-        // Configurar botões de exportação
-        function setupExportButtons() {
-            exportFullReport.addEventListener('click', () => exportToPDF('full'));
-            exportEfficiencyReport.addEventListener('click', () => exportToPDF('efficiency'));
-            exportSuggestionsReport.addEventListener('click', () => exportToPDF('suggestions'));
-            exportUnitReport.addEventListener('click', () => exportToPDF('unit'));
-        }
-
-        // Exportar para PDF
-        async function exportToPDF(type) {
-            try {
-                const btn = event.target;
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PDF...';
-                btn.disabled = true;
-                
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                let yPosition = 20;
-                
-                // Cabeçalho
-                doc.setFontSize(20);
-                doc.setTextColor(26, 82, 118);
-                doc.text('Relatório - Materiais de Limpeza SMS', 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(12);
-                doc.setTextColor(100, 100, 100);
-                doc.text('Secretaria Municipal de Saúde', 20, yPosition);
-                yPosition += 8;
-                doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 20, yPosition);
-                yPosition += 20;
-                
-                switch(type) {
-                    case 'full':
-                        await generateFullReport(doc, yPosition);
-                        break;
-                    case 'efficiency':
-                        await generateEfficiencyReport(doc, yPosition);
-                        break;
-                    case 'suggestions':
-                        await generateSuggestionsReport(doc, yPosition);
-                        break;
-                    case 'unit':
-                        await generateUnitReport(doc, yPosition);
-                        break;
-                }
-                
-                doc.save(`relatorio_${type}_${new Date().toISOString().split('T')[0]}.pdf`);
-                
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                
-            } catch (error) {
-                console.error('Erro ao gerar PDF:', error);
-                alert('Erro ao gerar relatório PDF');
-                const btn = event.target;
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        // Gerar relatório completo
-        async function generateFullReport(doc, yPosition) {
-            doc.setFontSize(16);
-            doc.setTextColor(0, 0, 0);
-            doc.text('Relatório Completo - Situação do Estoque', 20, yPosition);
-            yPosition += 20;
-            
-            doc.setFontSize(12);
-            doc.text(`Total de Unidades: ${unitsData.length}`, 20, yPosition);
-            yPosition += 8;
-            doc.text(`Total de Produtos: ${productsList.length}`, 20, yPosition);
-            yPosition += 8;
-            doc.text(`Unidades com Eficiência ≥ 90%: ${document.getElementById('efficientUnits').textContent}`, 20, yPosition);
-            yPosition += 8;
-            doc.text(`Unidades com Eficiência < 70%: ${document.getElementById('criticalUnits').textContent}`, 20, yPosition);
-            yPosition += 20;
-            
-            // Adicionar mais seções...
-        }
-
-        // Gerar relatório de eficiência
-        async function generateEfficiencyReport(doc, yPosition) {
-            doc.setFontSize(16);
-            doc.setTextColor(0, 0, 0);
-            doc.text('Relatório de Eficiência de Estoque', 20, yPosition);
-            yPosition += 20;
-            
-            const efficiencyData = calculateEfficiencyData();
-            
-            doc.setFontSize(12);
-            doc.text('Ranking das Unidades por Eficiência:', 20, yPosition);
-            yPosition += 15;
-            
-            efficiencyData.slice(0, 10).forEach((item, index) => {
-                if (yPosition > 270) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                doc.text(`${index + 1}. ${item.unit.name} - ${item.efficiency}%`, 25, yPosition);
-                yPosition += 7;
-            });
-        }
-
-        // Gerar relatório de sugestões
-        async function generateSuggestionsReport(doc, yPosition) {
-            doc.setFontSize(16);
-            doc.setTextColor(0, 0, 0);
-            doc.text('Relatório de Sugestões das Unidades', 20, yPosition);
-            yPosition += 20;
-            
-            doc.setFontSize(12);
-            suggestionsData.forEach((suggestion, index) => {
-                if (yPosition > 270) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                doc.text(`${suggestion.unitName}`, 20, yPosition);
-                yPosition += 6;
-                doc.text(`Sugestão: ${suggestion.product} (Qtd: ${suggestion.quantity})`, 25, yPosition);
-                yPosition += 6;
-                doc.text(`Status: ${suggestion.status === 'pending' ? 'Pendente' : suggestion.status === 'approved' ? 'Aprovada' : 'Rejeitada'}`, 25, yPosition);
-                yPosition += 6;
-                
-                if (suggestion.response) {
-                    doc.text(`Resposta: ${suggestion.response}`, 25, yPosition);
-                    yPosition += 6;
-                }
-                
-                yPosition += 5;
-            });
-        }
-
-        // Gerar relatório por unidade
-        async function generateUnitReport(doc, yPosition) {
-            doc.setFontSize(16);
-            doc.setTextColor(0, 0, 0);
-            doc.text('Relatório por Unidade - Materiais em Falta', 20, yPosition);
-            yPosition += 20;
-            
-            const criticalUnits = unitsData.filter(unit => 
-                unit.products.some(product => product.status === 'danger')
-            );
-            
-            doc.setFontSize(12);
-            criticalUnits.forEach((unit, index) => {
-                if (yPosition > 270) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                const criticalProducts = unit.products.filter(p => p.status === 'danger');
-                
-                doc.text(`${unit.name} (${unit.type})`, 20, yPosition);
-                yPosition += 8;
-                doc.text(`Produtos em falta: ${criticalProducts.length}`, 25, yPosition);
-                yPosition += 6;
-                
-                criticalProducts.forEach(product => {
-                    if (yPosition > 270) {
-                        doc.addPage();
-                        yPosition = 20;
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Tabs
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remover classe active de todas as tabs e conteúdos
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Adicionar classe active à tab e conteúdo selecionados
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Renderizar gráficos específicos da tab se necessário
+                    if (tabId === 'products') {
+                        renderProductDistributionChart();
+                    } else if (tabId === 'analysis') {
+                        if (!charts.efficiency) {
+                            setTimeout(initializeAnalysisCharts, 100);
+                        }
+                    } else if (tabId === 'efficiency') {
+                        calculateEfficiency();
                     }
-                    doc.text(`- ${product.name}`, 30, yPosition);
-                    yPosition += 6;
                 });
-                
-                yPosition += 10;
             });
+
+            // Filtros
+            filterType.addEventListener('change', updateDashboard);
+            refreshData.addEventListener('click', refreshDataHandler);
+            filterProduct.addEventListener('change', renderProductsTable);
         }
 
-        // Calcular dados de eficiência
-        function calculateEfficiencyData() {
-            return unitsData.map(unit => {
+        // Calcular eficiência de estoque
+        function calculateEfficiency() {
+            // Calcular eficiência para cada unidade
+            const efficiencyData = unitsData.map(unit => {
                 let totalCurrent = 0;
                 let totalMinSuggested = 0;
                 let productsAnalyzed = 0;
@@ -1438,215 +924,96 @@
                     status: efficiencyStatus,
                     productsAnalyzed: productsAnalyzed
                 };
-            }).sort((a, b) => b.efficiency - a.efficiency);
-        }
-
-        // Renderizar aba de sugestões
-        function renderSuggestionsTab() {
-            totalSuggestions.textContent = suggestionsData.length;
-            
-            const unitsWithSugs = new Set(suggestionsData.map(s => s.unitName)).size;
-            unitsWithSuggestions.textContent = unitsWithSugs;
-            
-            filterSuggestionUnit.innerHTML = '<option value="all">Todas as Unidades</option>';
-            unitNames.forEach(unit => {
-                const option = document.createElement('option');
-                option.value = unit;
-                option.textContent = unit;
-                filterSuggestionUnit.appendChild(option);
             });
             
-            renderSuggestionsTable();
-            renderSuggestionsChart();
+            // Ordenar por eficiência
+            efficiencyData.sort((a, b) => b.efficiency - a.efficiency);
             
-            filterSuggestionUnit.addEventListener('change', renderSuggestionsTable);
-            filterSuggestionStatus.addEventListener('change', renderSuggestionsTable);
+            // Atualizar contadores de eficiência
+            updateEfficiencyCounters(efficiencyData);
+            
+            // Atualizar tabela de ranking
+            updateEfficiencyTable(efficiencyData);
+            
+            // Renderizar gráficos de eficiência
+            renderEfficiencyCharts(efficiencyData);
         }
 
-        // Renderizar tabela de sugestões
-        function renderSuggestionsTable() {
-            const unitFilter = filterSuggestionUnit.value;
-            const statusFilter = filterSuggestionStatus.value;
-            
-            let filteredSuggestions = suggestionsData;
-            
-            if (unitFilter !== 'all') {
-                filteredSuggestions = filteredSuggestions.filter(s => s.unitName === unitFilter);
-            }
-            
-            if (statusFilter !== 'all') {
-                filteredSuggestions = filteredSuggestions.filter(s => s.status === statusFilter);
-            }
-            
-            suggestionsTableBody.innerHTML = '';
-            
-            filteredSuggestions.forEach(suggestion => {
-                const row = document.createElement('tr');
-                
-                const statusText = suggestion.status === 'pending' ? 'Pendente' : 
-                                 suggestion.status === 'approved' ? 'Aprovada' : 'Rejeitada';
-                
-                const statusClass = suggestion.status === 'pending' ? 'warning' : 
-                                  suggestion.status === 'approved' ? 'ok' : 'danger';
-                
-                row.innerHTML = `
-                    <td>${suggestion.unitName}</td>
-                    <td>${suggestion.product}</td>
-                    <td>${suggestion.quantity}</td>
-                    <td>${suggestion.date}</td>
-                    <td><span class="status ${statusClass}">${statusText}</span></td>
-                    <td>${suggestion.response || '-'}</td>
-                    <td>${suggestion.responsible || '-'}</td>
-                `;
-                
-                suggestionsTableBody.appendChild(row);
-            });
-        }
-
-        // Renderizar gráfico de sugestões por tipo
-        function renderSuggestionsChart() {
-            const ctx = document.getElementById('suggestionsByTypeChart').getContext('2d');
-            
-            if (charts.suggestionsByType) {
-                charts.suggestionsByType.destroy();
-            }
-            
-            const typeCounts = {
-                'UBS': { pending: 0, approved: 0, rejected: 0 },
-                'CAIS': { pending: 0, approved: 0, rejected: 0 },
-                'DEMAIS': { pending: 0, approved: 0, rejected: 0 }
-            };
-            
-            suggestionsData.forEach(suggestion => {
-                const unit = unitsData.find(u => u.name === suggestion.unitName);
-                if (unit) {
-                    typeCounts[unit.type][suggestion.status]++;
-                }
-            });
-            
-            charts.suggestionsByType = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['UBS', 'CAIS', 'Demais'],
-                    datasets: [
-                        {
-                            label: 'Pendentes',
-                            data: [typeCounts.UBS.pending, typeCounts.CAIS.pending, typeCounts.DEMAIS.pending],
-                            backgroundColor: '#ffc107'
-                        },
-                        {
-                            label: 'Aprovadas',
-                            data: [typeCounts.UBS.approved, typeCounts.CAIS.approved, typeCounts.DEMAIS.approved],
-                            backgroundColor: '#28a745'
-                        },
-                        {
-                            label: 'Rejeitadas',
-                            data: [typeCounts.UBS.rejected, typeCounts.CAIS.rejected, typeCounts.DEMAIS.rejected],
-                            backgroundColor: '#dc3545'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: true
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Número de Sugestões'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // [Restante das funções permanecem iguais...]
-        // initializeDashboard, setupEventListeners, updateCounters, updateDashboard, renderAllCharts,
-        // renderStatusChart, renderProductsChart, renderTypeChart, renderTrendChart, updateSummaryTable,
-        // renderUnitsList, showUnitDetails, populateProductFilter, renderProductsTable, 
-        // renderProductDistributionChart, calculateEfficiency, updateEfficiencyCounters, 
-        // updateEfficiencyTable, renderEfficiencyCharts, renderEfficiencyDistributionChart,
-        // renderTopEfficiencyChart, renderBottomEfficiencyChart, renderEfficiencyByTypeChart,
-        // refreshDataHandler, initializeAnalysisCharts, updateReportsTab
-
-        // Inicializar dashboard
-        function initializeDashboard() {
-            updateCounters();
-        }
-
-        // Configurar event listeners
-        function setupEventListeners() {
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    
-                    this.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-                    
-                    if (tabId === 'products') {
-                        renderProductDistributionChart();
-                    } else if (tabId === 'analysis') {
-                        if (!charts.efficiency) {
-                            setTimeout(initializeAnalysisCharts, 100);
-                        }
-                    } else if (tabId === 'efficiency') {
-                        calculateEfficiency();
-                    } else if (tabId === 'suggestions') {
-                        renderSuggestionsTab();
-                    } else if (tabId === 'reports') {
-                        updateReportsTab();
-                    }
-                });
-            });
-
-            filterType.addEventListener('change', updateDashboard);
-            refreshData.addEventListener('click', refreshDataHandler);
-            filterProduct.addEventListener('change', renderProductsTable);
-        }
-
-        // Atualizar aba de relatórios
-        function updateReportsTab() {
-            const efficiencyData = calculateEfficiencyData();
-            const efficientCount = efficiencyData.filter(item => item.status === 'high').length;
-            
-            document.getElementById('executiveEfficient').textContent = efficientCount;
-            document.getElementById('efficiencyAnalysis').textContent = 
-                `${efficientCount} unidades (${Math.round(efficientCount/unitsData.length*100)}%) apresentam entrega adequada de materiais`;
-            
-            document.getElementById('efficiencyRecommendations').textContent = 
-                `Recomenda-se revisão do contrato para as ${unitsData.length - efficientCount} unidades com eficiência abaixo de 90%`;
-
-            // Atualizar gráfico KPI
-            renderKPIChart();
-            updateAuditTable();
-        }
-
-        // Renderizar gráfico KPI
-        function renderKPIChart() {
-            const ctx = document.getElementById('kpiChart').getContext('2d');
-            
-            if (charts.kpi) {
-                charts.kpi.destroy();
-            }
-            
-            const efficiencyData = calculateEfficiencyData();
+        // Atualizar contadores de eficiência
+        function updateEfficiencyCounters(efficiencyData) {
             const efficientCount = efficiencyData.filter(item => item.status === 'high').length;
             const attentionCount = efficiencyData.filter(item => item.status === 'medium').length;
             const criticalCount = efficiencyData.filter(item => item.status === 'low').length;
             
-            charts.kpi = new Chart(ctx, {
+            efficientUnits.textContent = efficientCount;
+            attentionUnits.textContent = attentionCount;
+            criticalUnits.textContent = criticalCount;
+        }
+
+        // Atualizar tabela de eficiência
+        function updateEfficiencyTable(efficiencyData) {
+            efficiencyTableBody.innerHTML = '';
+            
+            efficiencyData.forEach((item, index) => {
+                const position = index + 1;
+                const unit = item.unit;
+                const efficiency = item.efficiency;
+                const status = item.status;
+                const productsAnalyzed = item.productsAnalyzed;
+                
+                const statusClass = status === 'high' ? 'efficiency-high' : 
+                                  status === 'medium' ? 'efficiency-medium' : 'efficiency-low';
+                
+                const statusText = status === 'high' ? 'Eficiente' : 
+                                 status === 'medium' ? 'Atenção' : 'Crítico';
+                
+                const typeClass = `type-${unit.type.toLowerCase()}`;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${position}</td>
+                    <td>${unit.name}</td>
+                    <td><span class="unit-type ${typeClass}">${unit.type}</span></td>
+                    <td>${efficiency}%</td>
+                    <td><span class="efficiency-badge ${statusClass}">${statusText}</span></td>
+                    <td>${productsAnalyzed}</td>
+                `;
+                
+                efficiencyTableBody.appendChild(row);
+            });
+        }
+
+        // Renderizar gráficos de eficiência
+        function renderEfficiencyCharts(efficiencyData) {
+            // Gráfico de distribuição da eficiência
+            renderEfficiencyDistributionChart(efficiencyData);
+            
+            // Gráfico das unidades mais eficientes
+            renderTopEfficiencyChart(efficiencyData);
+            
+            // Gráfico das unidades menos eficientes
+            renderBottomEfficiencyChart(efficiencyData);
+            
+            // Gráfico de eficiência por tipo
+            renderEfficiencyByTypeChart(efficiencyData);
+        }
+
+        // Gráfico de distribuição da eficiência
+        function renderEfficiencyDistributionChart(efficiencyData) {
+            const ctx = document.getElementById('efficiencyDistributionChart').getContext('2d');
+            
+            if (charts.efficiencyDistribution) {
+                charts.efficiencyDistribution.destroy();
+            }
+            
+            const efficientCount = efficiencyData.filter(item => item.status === 'high').length;
+            const attentionCount = efficiencyData.filter(item => item.status === 'medium').length;
+            const criticalCount = efficiencyData.filter(item => item.status === 'low').length;
+            
+            charts.efficiencyDistribution = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Eficientes', 'Atenção', 'Críticas'],
+                    labels: ['Eficiente (≥90%)', 'Atenção (70-89%)', 'Crítico (<70%)'],
                     datasets: [{
                         data: [efficientCount, attentionCount, criticalCount],
                         backgroundColor: ['#28a745', '#ffc107', '#dc3545']
@@ -1664,39 +1031,807 @@
             });
         }
 
-        // Atualizar tabela de auditoria
-        function updateAuditTable() {
-            const auditTableBody = document.getElementById('auditTableBody');
-            auditTableBody.innerHTML = '';
+        // Gráfico das unidades mais eficientes
+        function renderTopEfficiencyChart(efficiencyData) {
+            const ctx = document.getElementById('topEfficiencyChart').getContext('2d');
             
-            const efficiencyData = calculateEfficiencyData();
-            const avgEfficiency = efficiencyData.reduce((sum, item) => sum + item.efficiency, 0) / efficiencyData.length;
-            const pendingSuggestions = suggestionsData.filter(s => s.status === 'pending').length;
-            const criticalProducts = unitsData.reduce((sum, unit) => sum + unit.products.filter(p => p.status === 'danger').length, 0);
+            if (charts.topEfficiency) {
+                charts.topEfficiency.destroy();
+            }
             
-            const auditData = [
-                { indicator: 'Eficiência Média', value: `${Math.round(avgEfficiency)}%`, target: '≥90%', status: avgEfficiency >= 90 ? 'ok' : 'danger', variation: `${Math.round(avgEfficiency - 90)}%` },
-                { indicator: 'Sugestões Pendentes', value: pendingSuggestions, target: '≤5', status: pendingSuggestions <= 5 ? 'ok' : 'warning', variation: `${pendingSuggestions - 5}` },
-                { indicator: 'Produtos Críticos', value: criticalProducts, target: '≤10', status: criticalProducts <= 10 ? 'ok' : 'danger', variation: `${criticalProducts - 10}` },
-                { indicator: 'Unidades Eficientes', value: document.getElementById('efficientUnits').textContent, target: '≥80%', status: efficientCount >= unitsData.length * 0.8 ? 'ok' : 'warning', variation: `${efficientCount - Math.round(unitsData.length * 0.8)}` }
-            ];
+            const topUnits = efficiencyData.slice(0, 10);
+            const labels = topUnits.map(item => item.unit.name.substring(0, 15) + '...');
+            const efficiencies = topUnits.map(item => item.efficiency);
+            const colors = topUnits.map(item => 
+                item.status === 'high' ? '#28a745' : 
+                item.status === 'medium' ? '#ffc107' : '#dc3545'
+            );
             
-            auditData.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.indicator}</td>
-                    <td>${item.value}</td>
-                    <td>${item.target}</td>
-                    <td><span class="status ${item.status}">${item.status === 'ok' ? 'Dentro' : item.status === 'warning' ? 'Atenção' : 'Fora'}</span></td>
-                    <td>${item.variation}</td>
-                `;
-                auditTableBody.appendChild(row);
+            charts.topEfficiency = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Eficiência (%)',
+                        data: efficiencies,
+                        backgroundColor: colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Eficiência (%)'
+                            }
+                        }
+                    }
+                }
             });
         }
 
-        // [As demais funções do código anterior permanecem aqui...]
-        // Funções para gráficos, cálculos de eficiência, etc.
+        // Gráfico das unidades menos eficientes
+        function renderBottomEfficiencyChart(efficiencyData) {
+            const ctx = document.getElementById('bottomEfficiencyChart').getContext('2d');
+            
+            if (charts.bottomEfficiency) {
+                charts.bottomEfficiency.destroy();
+            }
+            
+            const bottomUnits = efficiencyData.slice(-10).reverse();
+            const labels = bottomUnits.map(item => item.unit.name.substring(0, 15) + '...');
+            const efficiencies = bottomUnits.map(item => item.efficiency);
+            const colors = bottomUnits.map(item => 
+                item.status === 'high' ? '#28a745' : 
+                item.status === 'medium' ? '#ffc107' : '#dc3545'
+            );
+            
+            charts.bottomEfficiency = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Eficiência (%)',
+                        data: efficiencies,
+                        backgroundColor: colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Eficiência (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
+        // Gráfico de eficiência por tipo de unidade
+        function renderEfficiencyByTypeChart(efficiencyData) {
+            const ctx = document.getElementById('efficiencyByTypeChart').getContext('2d');
+            
+            if (charts.efficiencyByType) {
+                charts.efficiencyByType.destroy();
+            }
+            
+            const typeEfficiencies = {
+                'UBS': [],
+                'CAIS': [],
+                'DEMAIS': []
+            };
+            
+            efficiencyData.forEach(item => {
+                typeEfficiencies[item.unit.type].push(item.efficiency);
+            });
+            
+            const typeAverages = {
+                'UBS': typeEfficiencies.UBS.length > 0 ? 
+                    typeEfficiencies.UBS.reduce((a, b) => a + b, 0) / typeEfficiencies.UBS.length : 0,
+                'CAIS': typeEfficiencies.CAIS.length > 0 ? 
+                    typeEfficiencies.CAIS.reduce((a, b) => a + b, 0) / typeEfficiencies.CAIS.length : 0,
+                'DEMAIS': typeEfficiencies.DEMAIS.length > 0 ? 
+                    typeEfficiencies.DEMAIS.reduce((a, b) => a + b, 0) / typeEfficiencies.DEMAIS.length : 0
+            };
+            
+            charts.efficiencyByType = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['UBS', 'CAIS', 'Demais'],
+                    datasets: [{
+                        label: 'Eficiência Média (%)',
+                        data: [
+                            Math.round(typeAverages.UBS),
+                            Math.round(typeAverages.CAIS),
+                            Math.round(typeAverages.DEMAIS)
+                        ],
+                        backgroundColor: ['#28a745', '#17a2b8', '#6c757d']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Eficiência Média (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Atualizar contadores
+        function updateCounters() {
+            document.getElementById('totalUnitsCount').textContent = unitsData.length;
+            document.getElementById('totalProductsCount').textContent = productsList.length;
+            
+            // Calcular alertas críticos
+            let criticalCount = 0;
+            unitsData.forEach(unit => {
+                unit.products.forEach(product => {
+                    if (product.status === 'danger') criticalCount++;
+                });
+            });
+            document.getElementById('criticalAlerts').textContent = criticalCount;
+            
+            // Calcular sugestões
+            let suggestionsCount = 0;
+            unitsData.forEach(unit => {
+                unit.products.forEach(product => {
+                    if (product.suggestion) suggestionsCount++;
+                });
+            });
+            document.getElementById('suggestionsCount').textContent = suggestionsCount;
+        }
+
+        // Atualizar dashboard com filtros
+        function updateDashboard() {
+            const type = filterType.value;
+            updateSummaryTable(type);
+            renderAllCharts(type);
+        }
+
+        // Renderizar todos os gráficos
+        function renderAllCharts(type = 'all') {
+            renderStatusChart(type);
+            renderProductsChart(type);
+            renderTypeChart(type);
+            renderTrendChart(type);
+        }
+
+        // Gráfico de status por unidade (Top 10)
+        function renderStatusChart(type = 'all') {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            if (charts.status) {
+                charts.status.destroy();
+            }
+            
+            let filteredUnits = type === 'all' ? unitsData : unitsData.filter(unit => unit.type === type);
+            
+            // Ordenar por número de produtos críticos e pegar top 10
+            filteredUnits = filteredUnits
+                .sort((a, b) => {
+                    const aCritical = a.products.filter(p => p.status === 'danger').length;
+                    const bCritical = b.products.filter(p => p.status === 'danger').length;
+                    return bCritical - aCritical;
+                })
+                .slice(0, 10);
+            
+            const unitNames = filteredUnits.map(unit => unit.name.substring(0, 15) + '...');
+            const criticalCounts = filteredUnits.map(unit => 
+                unit.products.filter(p => p.status === 'danger').length
+            );
+            const warningCounts = filteredUnits.map(unit => 
+                unit.products.filter(p => p.status === 'warning').length
+            );
+            
+            charts.status = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: unitNames,
+                    datasets: [
+                        {
+                            label: 'Crítico',
+                            data: criticalCounts,
+                            backgroundColor: '#dc3545'
+                        },
+                        {
+                            label: 'Atenção',
+                            data: warningCounts,
+                            backgroundColor: '#ffc107'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Número de Produtos'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de produtos mais faltantes
+        function renderProductsChart(type = 'all') {
+            const ctx = document.getElementById('productsChart').getContext('2d');
+            
+            if (charts.products) {
+                charts.products.destroy();
+            }
+            
+            const filteredUnits = type === 'all' ? unitsData : unitsData.filter(unit => unit.type === type);
+            const productShortages = {};
+            
+            productsList.forEach(product => {
+                productShortages[product] = 0;
+            });
+            
+            filteredUnits.forEach(unit => {
+                unit.products.forEach(product => {
+                    if (product.status === 'danger') {
+                        productShortages[product.name]++;
+                    }
+                });
+            });
+            
+            const sortedProducts = Object.entries(productShortages)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 8);
+            
+            charts.products = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedProducts.map(item => item[0]),
+                    datasets: [{
+                        label: 'Unidades com Falta',
+                        data: sortedProducts.map(item => item[1]),
+                        backgroundColor: '#dc3545'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Número de Unidades'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de distribuição por tipo
+        function renderTypeChart(type = 'all') {
+            const ctx = document.getElementById('typeChart').getContext('2d');
+            
+            if (charts.type) {
+                charts.type.destroy();
+            }
+            
+            const typeData = {
+                'UBS': { critical: 0, warning: 0, ok: 0 },
+                'CAIS': { critical: 0, warning: 0, ok: 0 },
+                'DEMAIS': { critical: 0, warning: 0, ok: 0 }
+            };
+            
+            unitsData.forEach(unit => {
+                unit.products.forEach(product => {
+                    typeData[unit.type][product.status]++;
+                });
+            });
+            
+            charts.type = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['UBS', 'CAIS', 'Demais'],
+                    datasets: [{
+                        data: [
+                            typeData.UBS.critical + typeData.UBS.warning + typeData.UBS.ok,
+                            typeData.CAIS.critical + typeData.CAIS.warning + typeData.CAIS.ok,
+                            typeData.DEMAIS.critical + typeData.DEMAIS.warning + typeData.DEMAIS.ok
+                        ],
+                        backgroundColor: ['#28a745', '#17a2b8', '#6c757d']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Gráfico de tendência (últimos 6 meses)
+        function renderTrendChart(type = 'all') {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            if (charts.trend) {
+                charts.trend.destroy();
+            }
+            
+            // Dados de exemplo para tendência (últimos 6 meses)
+            const months = ['Abr/25', 'Mai/25', 'Jun/25', 'Jul/25', 'Ago/25', 'Set/25'];
+            const criticalData = [12, 15, 18, 16, 20, 18];
+            const warningData = [18, 20, 22, 25, 28, 27];
+            
+            charts.trend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Alertas Críticos',
+                            data: criticalData,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Alertas de Atenção',
+                            data: warningData,
+                            borderColor: '#ffc107',
+                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Número de Alertas'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Atualizar tabela de resumo (Top 10 solicitantes)
+        function updateSummaryTable(type = 'all') {
+            let filteredUnits = type === 'all' ? unitsData : unitsData.filter(unit => unit.type === type);
+            
+            // Ordenar por número de produtos críticos (mais solicitantes)
+            filteredUnits = filteredUnits
+                .sort((a, b) => {
+                    const aCritical = a.products.filter(p => p.status === 'danger').length;
+                    const bCritical = b.products.filter(p => p.status === 'danger').length;
+                    return bCritical - aCritical;
+                })
+                .slice(0, 10);
+            
+            summaryTableBody.innerHTML = '';
+            
+            filteredUnits.forEach(unit => {
+                const criticalCount = unit.products.filter(p => p.status === 'danger').length;
+                const warningCount = unit.products.filter(p => p.status === 'warning').length;
+                const suggestionsCount = unit.products.filter(p => p.suggestion).length;
+                
+                let overallStatus = 'ok';
+                if (criticalCount > 3) {
+                    overallStatus = 'danger';
+                } else if (criticalCount > 0 || warningCount > 5) {
+                    overallStatus = 'warning';
+                }
+                
+                const typeClass = `type-${unit.type.toLowerCase()}`;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${unit.name}</td>
+                    <td><span class="unit-type ${typeClass}">${unit.type}</span></td>
+                    <td>${criticalCount}</td>
+                    <td>${warningCount}</td>
+                    <td>${suggestionsCount}</td>
+                    <td><span class="status ${overallStatus}">${
+                        overallStatus === 'ok' ? 'Normal' : 
+                        overallStatus === 'warning' ? 'Atenção' : 'Crítico'
+                    }</span></td>
+                    <td>${unit.lastUpdate}</td>
+                `;
+                
+                summaryTableBody.appendChild(row);
+            });
+        }
+
+        // Renderizar lista de unidades
+        function renderUnitsList() {
+            unitsListContainer.innerHTML = '';
+            
+            unitsData.forEach(unit => {
+                const criticalCount = unit.products.filter(p => p.status === 'danger').length;
+                const typeClass = `type-${unit.type.toLowerCase()}`;
+                
+                const unitItem = document.createElement('div');
+                unitItem.className = 'unit-item';
+                unitItem.innerHTML = `
+                    <div><strong>${unit.name}</strong> <span class="unit-type ${typeClass}">${unit.type}</span></div>
+                    <div style="font-size: 0.8rem; margin-top: 0.5rem;">
+                        <span class="status ${criticalCount > 0 ? 'danger' : 'ok'}">${criticalCount} críticos</span>
+                    </div>
+                `;
+                
+                unitItem.addEventListener('click', function() {
+                    // Remover active de todos os itens
+                    document.querySelectorAll('.unit-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Adicionar active ao item clicado
+                    this.classList.add('active');
+                    
+                    // Mostrar detalhes da unidade
+                    showUnitDetails(unit);
+                });
+                
+                unitsListContainer.appendChild(unitItem);
+            });
+        }
+
+        // Mostrar detalhes da unidade
+        function showUnitDetails(unit) {
+            selectedUnitName.textContent = `${unit.name} - ${unit.type}`;
+            
+            unitProductsGrid.innerHTML = '';
+            
+            unit.products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                productCard.innerHTML = `
+                    <div class="product-header">
+                        <div class="product-name">${product.name}</div>
+                        <span class="status ${product.status}">${
+                            product.status === 'ok' ? 'Normal' : 
+                            product.status === 'warning' ? 'Atenção' : 'Crítico'
+                        }</span>
+                    </div>
+                    <div class="product-data">
+                        <div class="data-item">
+                            <div class="data-label">Disponível (Out/25)</div>
+                            <div class="data-value">${product.current}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Mínimo Sugerido</div>
+                            <div class="data-value">${product.minSuggested}</div>
+                        </div>
+                    </div>
+                    ${product.suggestion ? `
+                    <div class="suggestions">
+                        <div class="data-label">Sugestão:</div>
+                        <div class="suggestion-item">
+                            ${product.suggestion} (Qtd: ${product.suggestedQty})
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+                
+                unitProductsGrid.appendChild(productCard);
+            });
+        }
+
+        // Preencher filtro de produtos
+        function populateProductFilter() {
+            productsList.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product;
+                option.textContent = product;
+                filterProduct.appendChild(option);
+            });
+        }
+
+        // Renderizar tabela de produtos
+        function renderProductsTable() {
+            const selectedProduct = filterProduct.value;
+            
+            productsTableBody.innerHTML = '';
+            
+            productsList.forEach(productName => {
+                if (selectedProduct !== 'all' && selectedProduct !== productName) return;
+                
+                let totalCurrent = 0;
+                let totalMinSuggested = 0;
+                let lowStockUnits = 0;
+                let criticalUnits = 0;
+                
+                unitsData.forEach(unit => {
+                    const product = unit.products.find(p => p.name === productName);
+                    if (product) {
+                        totalCurrent += product.current;
+                        totalMinSuggested += product.minSuggested;
+                        
+                        if (product.status === 'warning') lowStockUnits++;
+                        if (product.status === 'danger') criticalUnits++;
+                    }
+                });
+                
+                let overallStatus = 'ok';
+                if (criticalUnits > unitsData.length * 0.3) {
+                    overallStatus = 'danger';
+                } else if (criticalUnits > 0 || lowStockUnits > unitsData.length * 0.4) {
+                    overallStatus = 'warning';
+                }
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${productName}</td>
+                    <td>${totalCurrent}</td>
+                    <td>${totalMinSuggested}</td>
+                    <td>${lowStockUnits}</td>
+                    <td>${criticalUnits}</td>
+                    <td><span class="status ${overallStatus}">${
+                        overallStatus === 'ok' ? 'Normal' : 
+                        overallStatus === 'warning' ? 'Atenção' : 'Crítico'
+                    }</span></td>
+                `;
+                
+                productsTableBody.appendChild(row);
+            });
+            
+            // Atualizar gráfico de distribuição se estiver na tab de produtos
+            if (document.getElementById('products').classList.contains('active')) {
+                renderProductDistributionChart(selectedProduct);
+            }
+        }
+
+        // Gráfico de distribuição do produto
+        function renderProductDistributionChart(productName = null) {
+            const ctx = document.getElementById('productDistributionChart').getContext('2d');
+            
+            if (charts.productDistribution) {
+                charts.productDistribution.destroy();
+            }
+            
+            const selectedProduct = productName || filterProduct.value;
+            
+            if (selectedProduct === 'all') {
+                // Mostrar gráfico para todos os produtos
+                const productTotals = {};
+                productsList.forEach(product => {
+                    productTotals[product] = 0;
+                    unitsData.forEach(unit => {
+                        const unitProduct = unit.products.find(p => p.name === product);
+                        if (unitProduct) {
+                            productTotals[product] += unitProduct.current;
+                        }
+                    });
+                });
+                
+                const sortedProducts = Object.entries(productTotals)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10);
+                
+                charts.productDistribution = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: sortedProducts.map(item => item[0]),
+                        datasets: [{
+                            label: 'Total Disponível',
+                            data: sortedProducts.map(item => item[1]),
+                            backgroundColor: '#1a5276'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Quantidade Total'
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Mostrar gráfico para um produto específico
+                const unitData = [];
+                const unitNames = [];
+                
+                unitsData.forEach(unit => {
+                    const product = unit.products.find(p => p.name === selectedProduct);
+                    if (product) {
+                        unitData.push(product.current);
+                        unitNames.push(unit.name.substring(0, 15) + '...');
+                    }
+                });
+                
+                charts.productDistribution = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: unitNames,
+                        datasets: [{
+                            label: `Estoque de ${selectedProduct}`,
+                            data: unitData,
+                            backgroundColor: unitData.map(value => 
+                                value === 0 ? '#dc3545' : 
+                                value < 2 ? '#ffc107' : '#28a745'
+                            )
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Quantidade em Estoque'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Atualizar dados em tempo real
+        async function refreshDataHandler() {
+            try {
+                // Simular carregamento
+                refreshData.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
+                refreshData.disabled = true;
+                
+                // Em uma implementação real, aqui você faria a chamada para a API do Google Sheets
+                // const response = await fetch('SUA_URL_DA_API');
+                // const realData = await response.json();
+                
+                // Simular delay de rede
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Simular dados atualizados (em produção, use os dados reais da API)
+                unitsData.forEach(unit => {
+                    // Simular pequenas variações nos dados
+                    unit.products.forEach(product => {
+                        const variation = Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0;
+                        product.current = Math.max(0, product.current + variation);
+                        
+                        // Atualizar status
+                        if (product.current === 0) {
+                            product.status = "danger";
+                        } else if (product.current < product.minSuggested) {
+                            product.status = "warning";
+                        } else {
+                            product.status = "ok";
+                        }
+                    });
+                    
+                    // Atualizar timestamp
+                    const now = new Date();
+                    unit.lastUpdate = `${now.getDate()}/10/2025 - ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                });
+                
+                // Recarregar todos os dados e gráficos
+                updateDashboard();
+                renderUnitsList();
+                renderProductsTable();
+                updateCounters();
+                calculateEfficiency();
+                
+                refreshData.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar Dados em Tempo Real';
+                refreshData.disabled = false;
+                
+                alert('Dados atualizados com sucesso em tempo real!');
+            } catch (error) {
+                alert('Erro ao carregar dados: ' + error.message);
+                refreshData.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar Dados em Tempo Real';
+                refreshData.disabled = false;
+            }
+        }
+
+        // Inicializar gráficos de análise IA
+        function initializeAnalysisCharts() {
+            // Gráfico de eficiência por tipo
+            const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
+            
+            const typeEfficiency = {
+                'UBS': Math.floor(Math.random() * 30) + 65,
+                'CAIS': Math.floor(Math.random() * 25) + 70,
+                'DEMAIS': Math.floor(Math.random() * 35) + 60
+            };
+            
+            charts.efficiency = new Chart(efficiencyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['UBS', 'CAIS', 'Demais'],
+                    datasets: [{
+                        label: 'Eficiência de Estoque (%)',
+                        data: [typeEfficiency.UBS, typeEfficiency.CAIS, typeEfficiency.DEMAIS],
+                        backgroundColor: ['#28a745', '#17a2b8', '#6c757d']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Eficiência (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de correlação
+            const correlationCtx = document.getElementById('correlationChart').getContext('2d');
+            charts.correlation = new Chart(correlationCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['ÁGUA SANITÁRIA', 'ÁLCOOL 70%', 'DESINFETANTE', 'DETERGENTE', 'SACOS DE LIXO'],
+                    datasets: [
+                        {
+                            label: 'UBS',
+                            data: [65, 59, 80, 71, 56],
+                            fill: true,
+                            backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                            borderColor: 'rgb(40, 167, 69)',
+                            pointBackgroundColor: 'rgb(40, 167, 69)'
+                        },
+                        {
+                            label: 'CAIS',
+                            data: [48, 78, 62, 69, 74],
+                            fill: true,
+                            backgroundColor: 'rgba(23, 162, 184, 0.2)',
+                            borderColor: 'rgb(23, 162, 184)',
+                            pointBackgroundColor: 'rgb(23, 162, 184)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
